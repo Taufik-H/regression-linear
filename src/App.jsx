@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import * as math from 'mathjs';
 
-const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API;
+const WEATHER_API_KEY = process.env.VITE_WEATHER_API;
 const WEATHER_API_ENDPOINT = `https://api.weatherapi.com/v1/forecast.json?key=${WEATHER_API_KEY}&q=`;
 
 export default function App() {
