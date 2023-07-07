@@ -1,5 +1,8 @@
 # Laporan Penjelasan Algoritma Aplikasi Web Prediksi Cuaca
+![preview](https://raw.githubusercontent.com/Taufik-H/regression-linear/main/image.png)
 
+### Demo
+[Demo Link](https://regression-linear.vercel.app/)
 ## Deskripsi
 Aplikasi web ini bertujuan untuk memprediksi cuaca besok berdasarkan data historis cuaca pada lokasi yang diinputkan oleh pengguna. Aplikasi ini menggunakan API dari WeatherAPI untuk mendapatkan data cuaca historis dan melakukan prediksi cuaca menggunakan algoritma regresi.
 
