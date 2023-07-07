@@ -129,7 +129,7 @@ export default function App() {
                   <img
                     src={prediction.icon}
                     alt="Weather Icon"
-                    className="w-20 h-20 mr-3 object-cover"
+                    className="w-20 h-20 mr-3 object-contain"
                   />
                 </div>
                 <p className="text-lg font-bold mb-4 text-white">
