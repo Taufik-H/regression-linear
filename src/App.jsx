@@ -10,9 +10,12 @@ export default function App() {
   const [prediction, setPrediction] = useState(null);
   const [loading, setLoading] = useState(false);
   const [regressionResult, setRegressionResult] = useState(null);
+  const [locationError, setLocationError] = useState(false);
 
   const handleLocationChange = (e) => {
     setLocation(e.target.value);
+    setPrediction(null);
+    setLocationError(false);
   };
 
   const fetchWeatherData = async () => {
@@ -34,7 +37,12 @@ export default function App() {
       setPrediction(predictedWeather);
       setLoading(false);
     } catch (error) {
-      console.error('Terjadi kesalahan saat mengambil data cuaca:', error);
+      if (error.response && error.response.status === 404) {
+        console.log('lokasi tidak ditemukan');
+        setPrediction(null);
+        setLocationError(true);
+      }
+
       setLoading(false);
     }
   };
@@ -43,9 +51,9 @@ export default function App() {
     const dates = data.map((item) => item.date);
     const temps = data.map((item) => item.temp);
 
-    const X = dates.map((date) => [1, new Date(date).getTime()]); // Include date using timestamp
+    const X = dates.map((date) => [1, new Date(date).getTime()]); // Include date menggunakan timestamp
 
-    // Calculate regression coefficients using matrix operations
+    // menghitung koefisien regresi menggunakan metode normal equation
     const XTranspose = math.transpose(X);
     const XTX = math.multiply(XTranspose, X);
     const XTY = math.multiply(XTranspose, temps);
@@ -53,12 +61,12 @@ export default function App() {
 
     const tomorrowDate = new Date();
     tomorrowDate.setDate(tomorrowDate.getDate() + 1);
-    const tomorrowFeatures = [1, tomorrowDate.getTime()]; // Encode tomorrow's date
+    const tomorrowFeatures = [1, tomorrowDate.getTime()]; // ambil data besok (waktu)
 
-    // Predict tomorrow's temperature using regression coefficients
+    // prediksi temperatur besok berdasarkan data historis
     const tomorrowTemp = math.multiply(tomorrowFeatures, coefficients);
 
-    // Additional logic to predict weather condition based on temperature
+    // prediksi berdasarkan suhu atau temperatur
     let condition = '';
     let icon = '';
 
@@ -82,9 +90,10 @@ export default function App() {
 
     setRegressionResult(regressionResult);
 
+    console.table(regressionResult);
     return {
       temp: regressionResult.tomorrowTemp,
-      condition,
+      condition: regressionResult.condition,
       icon,
     };
   };
@@ -113,24 +122,33 @@ export default function App() {
             </div>
           </div>
           {loading && <p>Proses algoritma regresi sedang berjalan...</p>}
-        </div>
-        {prediction && (
-          <div className="mt-4 bg-white bg-opacity-20 rounded-xl p-3 border border-gray-300">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-md bg-slate-600">
-                <img
-                  src={prediction.icon}
-                  alt="Weather Icon"
-                  className="w-20 h-20 mr-3 object-cover"
-                />
+          {!loading && location !== '' && prediction && (
+            <div className="mt-4 bg-white bg-opacity-20 rounded-xl p-3 border border-gray-300">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-md bg-slate-600">
+                  <img
+                    src={prediction.icon}
+                    alt="Weather Icon"
+                    className="w-20 h-20 mr-3 object-cover"
+                  />
+                </div>
+                <p className="text-lg font-bold mb-4 text-white">
+                  Prediksi cuaca besok: {prediction.temp}°C,{' '}
+                  {prediction.condition}
+                </p>
               </div>
-              <p className="text-lg font-bold mb-4 text-white">
-                Prediksi cuaca besok: {prediction.temp}°C,{' '}
-                {prediction.condition}
-              </p>
             </div>
-          </div>
-        )}
+          )}
+          {!loading && location !== '' && !prediction && locationError && (
+            <div className="mt-4 bg-white bg-opacity-20 rounded-xl p-3 border border-gray-300">
+              <div className="flex flex-col items-center">
+                <p className="text-lg font-bold mb-4 text-white">
+                  Lokasi tidak tersedia
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
