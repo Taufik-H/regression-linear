@@ -1,4 +1,4 @@
-# Laporan Penjelasan Algoritma Aplikasi Web Prediksi Cuaca
+# Penjelasan Algoritma Aplikasi Web Prediksi Cuaca
 ![preview](https://raw.githubusercontent.com/Taufik-H/regression-linear/main/image1.png)
 
 ### Demo
